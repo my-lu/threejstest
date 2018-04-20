@@ -299,11 +299,11 @@
       controls = new THREE.OrbitControls(camera, renderer.domElement);
       //controls = new THREE.FirstPersonControls(camera, renderer.domElement);
 
-      var loader = new THREE.ColladaLoader();
+      var loader = new THREE.OBJLoader();
 
       loader.load(
         // resource URL
-        'models/gun.dae',
+        'models/gun.obj',
         // called when resource is loaded
         function ( object ) {
 
