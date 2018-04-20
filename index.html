@@ -300,6 +300,7 @@
       controls = new THREE.OrbitControls(camera, renderer.domElement);
       //controls = new THREE.FirstPersonControls(camera, renderer.domElement);
 
+      var gunModel;
       var loadingManager = new THREE.LoadingManager(function() {
         scene.add(gunModel);
       });
