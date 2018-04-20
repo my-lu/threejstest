@@ -47,7 +47,7 @@
     <script src="js/OrbitControls.js"></script>
     <script src="js/PointerLockControls.js"></script>
     <script src="js/OBJLoader.js"></script>
-    <script src="js/ColladaLoader.js"></script>
+    <script src="js/MTLLoader.js"></script>
     <script src="js/enemy.js"></script>
 
     <script>
@@ -299,30 +299,19 @@
       controls = new THREE.OrbitControls(camera, renderer.domElement);
       //controls = new THREE.FirstPersonControls(camera, renderer.domElement);
 
-      var loader = new THREE.OBJLoader();
-
-      loader.load(
-        // resource URL
-        'models/gun.obj',
-        // called when resource is loaded
-        function ( object ) {
-
-          scene.add( object );
-
-        },
-        // called when loading is in progresses
-        function ( xhr ) {
-
-          console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-
-        },
-        // called when loading has errors
-        function ( error ) {
-
-          console.log( 'An error happened' );
-
-        }
-      );
+      var mtlLoader = new THREE.MTLLoader();
+      mtlLoader.load('models/gun.mtl', function (materials) {
+          materials.preload();
+       
+          var objLoader = new THREE.OBJLoader();
+          objLoader.setMaterials(materials);
+          objLoader.load('models/gun.obj', function (object) {
+       
+              scene.add(object);
+       
+          });
+       
+      });
       
 
       //var enemy = new THREE.EnemyPrefab(scene);
