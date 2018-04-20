@@ -52,7 +52,7 @@
     <script src="js/enemy.js"></script>
 
     <script>
-      /*
+      
 
     <div id="overlay">
       <div id="pause">
@@ -216,6 +216,17 @@
         enemy = new THREE.EnemyPrefab(scene, 5);
         // -------------------- //
 
+        // --- Gun Object --- //
+        var loadingManager = new THREE.LoadingManager(function() {
+          scene.add(gunModel);
+        });
+
+        var loader = new THREE.ColladaLoader(loadingManager);
+        loader.load('./models/gun.dae', function (collada) {
+          gunModel = collada.scene;
+        });
+        // ------------------ //
+
         renderer = new THREE.WebGLRenderer({antialias: true});
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
@@ -235,8 +246,8 @@
         requestAnimationFrame(update);
 
         if(enableControls) {
-          //var controlObject = controls.getObject();
-          var controlObject = enemy.enemyPrefab;
+          var controlObject = controls.getObject();
+          //var controlObject = enemy.enemyPrefab;
 
           raycaster.ray.origin.copy(controlObject.position);
 
@@ -277,11 +288,11 @@
 
         renderer.render(scene, camera);
       }
-      */
+      
 
 
 
-
+      /*
       var scene = new THREE.Scene();
       var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
@@ -334,6 +345,7 @@
       };
 
       GameLoop();
+      */
     </script>
   </body>
 </html>
