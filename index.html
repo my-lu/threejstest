@@ -46,6 +46,7 @@
     <script src="js/three.js"></script>
     <script src="js/OrbitControls.js"></script>
     <script src="js/PointerLockControls.js"></script>
+    <script src="js/DDSLoader.js"></script>
     <script src="js/OBJLoader.js"></script>
     <script src="js/MTLLoader.js"></script>
     <script src="js/ColladaLoader.js"></script>
@@ -312,7 +313,7 @@
 
       var onError = function ( xhr ) { };
 
-      //THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
+      THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
 
       new THREE.MTLLoader()
         .setPath( 'models/' )
