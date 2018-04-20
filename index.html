@@ -43,19 +43,22 @@
   </head>
 
   <body>
+    <script src="js/three.js"></script>
+    <script src="js/OrbitControls.js"></script>
+    <script src="js/PointerLockControls.js"></script>
+    <script src="js/enemy.js"></script>
+
+    <script>
+      /*
+
     <div id="overlay">
       <div id="pause">
         <span style="font-size:30px">PAUSE</span>
       </div>
     </div>
-
-    <script src="js/three.js"></script>
-    <script src="js/OrbitControls.js"></script>
-    <script src="js/PointerLockControls.js"></script>
-
-    <script>
       var scene, camera, controls, renderer;
       var objects = [];
+      var enemy;
 
       var raycaster;
 
@@ -109,18 +112,23 @@
       var move_right = false;
       var move_jump = false;
 
-      var dTime = performance.now();
+      var lastTime = performance.now();
       var velocity = new THREE.Vector3();
       var direction = new THREE.Vector3();
       var vertex = new THREE.Vector3();
-      var color = new THREE.Vector3();
+      var color = new THREE.Color();
 
       start();
-      //update();
+      update();
 
       function start() {
         scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xffffff);
         camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        var light = new THREE.HemisphereLight(0xeeeeff, 0x777788, 0.75);
+        light.position.set(0.5, 1, 0.75);
+        scene.add(light);
 
         // --- Controls --- //
         controls = new THREE.PointerLockControls(camera);
@@ -132,7 +140,7 @@
             case 83: move_backward = true; break;
             case 65: move_left = true; break;
             case 68: move_right = true; break;
-            case 32: if(move_jump === true) velocity.y += 300; move_jump = false; break;
+            case 32: if(move_jump) velocity.y += 75; move_jump = false; break;
           }
         };
 
@@ -149,40 +157,128 @@
         document.addEventListener('keyup', onKeyUp, false);
         // ---------------- //
 
-        raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, 10);
+        raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, 5);
 
         // --- Floor Object --- //
         var floorGeometry = new THREE.PlaneBufferGeometry(100, 100, 10, 10);
         floorGeometry.rotateX(-Math.PI / 2);
 
         var position = floorGeometry.attributes.position;
-        for ( var i = 0; i < position.count; i ++ ) {
-          vertex.fromBufferAttribute( position, i );
-          vertex.x += Math.random() * 20 - 10;
-          vertex.y += Math.random() * 2;
-          vertex.z += Math.random() * 20 - 10;
-          position.setXYZ( i, vertex.x, vertex.y, vertex.z );
+        for(var i = 0; i < position.count; i++) {
+          vertex.fromBufferAttribute(position, i);
+          vertex.x += Math.random() * 2 - 1;
+          vertex.y += Math.random();
+          vertex.z += Math.random() * 2 - 1;
+          position.setXYZ(i, vertex.x, vertex.y, vertex.z);
         }
-        floorGeometry = floorGeometry.toNonIndexed(); // ensure each face has unique vertices
+        floorGeometry = floorGeometry.toNonIndexed();
+
         count = floorGeometry.attributes.position.count;
-        var colors = [];
-        for ( var i = 0; i < count; i ++ ) {
-          color.setHSL( Math.random() * 0.3 + 0.5, 0.75, Math.random() * 0.25 + 0.75 );
-          colors.push( color.r, color.g, color.b );
+        colors = [];
+        for(var i = 0; i < count; i++) {
+          color.setHSL(1, 0, Math.random() * 0.4 + 0.6);
+          colors.push(color.r, color.g, color.b);
         }
-        floorGeometry.addAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
+        floorGeometry.addAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
         
         var floorMaterial = new THREE.MeshBasicMaterial({vertexColors: THREE.VertexColors});
         var floor = new THREE.Mesh(floorGeometry, floorMaterial);
         scene.add(floor);
         // -------------------- //
+
+        // --- Box Object --- //
+        var boxGeometry = new THREE.BoxBufferGeometry(10, 10, 10);
+        boxGeometry = boxGeometry.toNonIndexed();
+
+        count = boxGeometry.attributes.position.count;
+        colors = [];
+        for (var i = 0; i < count; i++) {
+          color.setHSL(Math.random() * 0.3 + 0.5, 0.75, Math.random() * 0.25 + 0.75);
+          colors.push(color.r, color.g, color.b);
+        }
+        boxGeometry.addAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        for (var i = 0; i < 10; i++) {
+          var boxMaterial = new THREE.MeshPhongMaterial({specular: 0xffffff, flatShading: true, vertexColors: THREE.VertexColors});
+          boxMaterial.color.setHSL(Math.random() * 0.2 + 0.5, 0.75, Math.random() * 0.25 + 0.75);
+          var box = new THREE.Mesh(boxGeometry, boxMaterial);
+          box.position.x = Math.floor(Math.random() * 10 - 5) * 10;
+          box.position.y = 5;
+          box.position.z = Math.floor(Math.random() * 10 - 5) * 10;
+          scene.add(box);
+          objects.push(box);
+        }
+        // ------------------ //
+
+        // --- Enemy Object --- //
+        enemy = new THREE.EnemyPrefab(scene, 5);
+        // -------------------- //
+
+        renderer = new THREE.WebGLRenderer({antialias: true});
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        var onWindowResize = function(event) {
+          var width = window.innerWidth;
+          var height = window.innerHeight;
+          renderer.setSize(width, height);
+          camera.aspect = width / height;
+          camera.updateProjectionMatrix();
+        };
+
+        window.addEventListener('resize', onWindowResize, false);
       }
 
+      function update() {
+        requestAnimationFrame(update);
+
+        if(enableControls) {
+          //var controlObject = controls.getObject();
+          var controlObject = enemy.enemyPrefab;
+
+          raycaster.ray.origin.copy(controlObject.position);
+
+          var intersections = raycaster.intersectObjects(objects);
+          var onObject = intersections.length > 0;
+
+          var time = performance.now();
+          var deltaTime = (time - lastTime) / 1000;
+
+          velocity.x *= 1 - 10.0 * deltaTime;
+          velocity.z *= 1 - 10.0 * deltaTime;
+          velocity.y -= 9.8 * 25.0 * deltaTime;
+
+          direction.z = Number(move_forward) - Number(move_backward);
+          direction.x = Number(move_left) - Number(move_right);
+          direction.normalize();
+
+          if(move_forward || move_backward) velocity.z -= direction.z * 400.0 * deltaTime;
+          if(move_left || move_right) velocity.x -= direction.x * 400.0 * deltaTime;
+
+          if(onObject) {
+            velocity.y = Math.max(0, velocity.y);
+            move_jump = true;
+          }
+
+          controlObject.translateX(velocity.x * deltaTime);
+          controlObject.translateY(velocity.y * deltaTime);
+          controlObject.translateZ(velocity.z * deltaTime);
+
+          if(controlObject.position.y < 5) {
+            velocity.y = 0;
+            controlObject.position.y = 5;
+            move_jump = true;
+          }
+
+          lastTime = time;
+        }
+
+        renderer.render(scene, camera);
+      }
+      */
 
 
 
 
-    /*
       var scene = new THREE.Scene();
       var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
@@ -198,20 +294,45 @@
         camera.updateProjectionMatrix();
       });
 
-      //controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls = new THREE.FirstPersonControls(camera, renderer.domElement);
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      //controls = new THREE.FirstPersonControls(camera, renderer.domElement);
 
-      var geometry = new THREE.BoxGeometry(1, 1, 1);
+      var loader = new THREE.OBJLoader();
 
-      var material = new THREE.MeshBasicMaterial({color: 0xFFFFFF, wireframe: true});
-      var cube = new THREE.Mesh(geometry, material);
-      scene.add(cube);
+      loader.load(
+        // resource URL
+        'models/gun.obj',
+        // called when resource is loaded
+        function ( object ) {
+          
+          scene.add( object );
+
+        },
+        // called when loading is in progresses
+        function ( xhr ) {
+
+          console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+        },
+        // called when loading has errors
+        function ( error ) {
+
+          console.log( 'An error happened' );
+
+        }
+      );
+      
+
+      //var enemy = new THREE.EnemyPrefab(scene);
 
       camera.position.z = 3;
 
       var update = function() {
-        cube.rotation.x += 0.01;
-        cube.rotation.y += 0.005;
+        
+        //cube.rotation.x += 0.01;
+        //cube.rotation.y += 0.005;
+        
+        //enemy.setGeometry();
       };
 
       var render = function() {
@@ -226,7 +347,6 @@
       };
 
       GameLoop();
-    */
     </script>
   </body>
 </html>
