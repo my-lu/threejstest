@@ -124,7 +124,6 @@
       start();
       update();
 
-      var character;
       function start() {
         scene = new THREE.Scene();
         scene.background = new THREE.Color(0xffffff);
@@ -135,13 +134,13 @@
         scene.add(light);
 
         // --- Character --- //
-        character = new THREE.Group();
+        var character = new THREE.Group();
         scene.add(character);
         // ----------------- //
 
         // --- Controls --- //
         controls = new THREE.PointerLockControls(camera);
-        character.add(controls.getObject());
+        scene.add(controls.getObject());
 
         var onKeyDown = function(event) {
           switch(event.keyCode) {
@@ -253,7 +252,7 @@
         requestAnimationFrame(update);
 
         if(enableControls) {
-          var controlObject = character;
+          var controlObject = controls.getObject();
           //var controlObject = enemy.enemyPrefab;
 
           raycaster.ray.origin.copy(controlObject.position);
