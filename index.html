@@ -133,9 +133,14 @@
         light.position.set(0.5, 1, 0.75);
         scene.add(light);
 
+        // --- Character --- //
+        var character = new THREE.Group();
+        scene.add(character);
+        // ----------------- //
+
         // --- Controls --- //
         controls = new THREE.PointerLockControls(camera);
-        scene.add(controls.getObject());
+        character.add(controls.getObject());
 
         var onKeyDown = function(event) {
           switch(event.keyCode) {
@@ -160,7 +165,7 @@
         document.addEventListener('keyup', onKeyUp, false);
         // ---------------- //
 
-        raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, 5);
+        raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, 10);
 
         // --- Floor Object --- //
         var floorGeometry = new THREE.PlaneBufferGeometry(100, 100, 10, 10);
@@ -218,7 +223,8 @@
 
         // --- Gun Object --- //
         var loadingManager = new THREE.LoadingManager(function() {
-          scene.add(gunModel);
+          gunModel.position.set(0, 10, 5);
+          character.add(gunModel);
         });
 
         var loader = new THREE.ColladaLoader(loadingManager);
@@ -277,9 +283,9 @@
           controlObject.translateY(velocity.y * deltaTime);
           controlObject.translateZ(velocity.z * deltaTime);
 
-          if(controlObject.position.y < 5) {
+          if(controlObject.position.y < 10) {
             velocity.y = 0;
-            controlObject.position.y = 5;
+            controlObject.position.y = 10;
             move_jump = true;
           }
 
