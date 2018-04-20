@@ -252,7 +252,7 @@
         requestAnimationFrame(update);
 
         if(enableControls) {
-          var controlObject = controls.getObject();
+          var controlObject = character;
           //var controlObject = enemy.enemyPrefab;
 
           raycaster.ray.origin.copy(controlObject.position);
