@@ -46,7 +46,6 @@
     <script src="js/three.js"></script>
     <script src="js/OrbitControls.js"></script>
     <script src="js/PointerLockControls.js"></script>
-    <script src="js/DDSLoader.js"></script>
     <script src="js/OBJLoader.js"></script>
     <script src="js/MTLLoader.js"></script>
     <script src="js/ColladaLoader.js"></script>
@@ -300,38 +299,25 @@
 
       controls = new THREE.OrbitControls(camera, renderer.domElement);
       //controls = new THREE.FirstPersonControls(camera, renderer.domElement);
-      var onProgress = function ( xhr ) {
-
-        if ( xhr.lengthComputable ) {
-
-          var percentComplete = xhr.loaded / xhr.total * 100;
-          console.log( Math.round( percentComplete, 2 ) + '% downloaded' );
-
-        }
-
-      };
-
-      var onError = function ( xhr ) { };
-
 
       var mtlLoader = new THREE.MTLLoader();
-      mtlLoader.setBaseUrl( 'models/' );
-      mtlLoader.setPath( 'models/' );
-      var url = "gun.mtl";
-      mtlLoader.load( url, function( materials ) {
-
+      mtlLoader.setTexturePath('./models/');
+      mtlLoader.setPath('/models/');
+      mtlLoader.load('gun.mtl', function (materials) {
+       
           materials.preload();
-
+       
           var objLoader = new THREE.OBJLoader();
-          objLoader.setMaterials( materials );
-          objLoader.setPath( 'models/' );
-          objLoader.load( 'gun.obj', function ( object ) {
-
-              scene.add( object );
-
-          }, onProgress, onError );
-
+          objLoader.setMaterials(materials);
+          objLoader.setPath('/models/');
+          objLoader.load('gun.obj', function (object) {
+       
+              scene.add(object);
+       
+          });
+       
       });
+      
 
       //var enemy = new THREE.EnemyPrefab(scene);
 
