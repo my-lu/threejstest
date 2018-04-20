@@ -300,31 +300,14 @@
       controls = new THREE.OrbitControls(camera, renderer.domElement);
       //controls = new THREE.FirstPersonControls(camera, renderer.domElement);
 
-      var loader = new THREE.ColladaLoader();
+      var loadingManager = new THREE.LoadingManager(function() {
+        scene.add(gunModel);
+      });
 
-      loader.load(
-        // resource URL
-        'models/gun.dae',
-        // called when resource is loaded
-        function ( object ) {
-
-          scene.add( object );
-
-        },
-        // called when loading is in progresses
-        function ( xhr ) {
-
-          console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-
-        },
-        // called when loading has errors
-        function ( error ) {
-
-          console.log( 'An error happened' );
-
-        }
-      );
-      
+      var loader = new THREE.ColladaLoader(loadingManager);
+      loader.load('./models/gun.dae', function (collada) {
+        gunModel = collada.scene;
+      });
 
       //var enemy = new THREE.EnemyPrefab(scene);
 
