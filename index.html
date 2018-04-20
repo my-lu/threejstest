@@ -299,16 +299,37 @@
 
       controls = new THREE.OrbitControls(camera, renderer.domElement);
       //controls = new THREE.FirstPersonControls(camera, renderer.domElement);
+      var onProgress = function ( xhr ) {
 
-      var gunModel;
-      var loadingManager = new THREE.LoadingManager(function() {
-        scene.add(gunModel);
-      });
+        if ( xhr.lengthComputable ) {
 
-      var loader = new THREE.ColladaLoader(loadingManager);
-      loader.load('./models/gun.dae', function (collada) {
-        gunModel = collada.scene;
-      });
+          var percentComplete = xhr.loaded / xhr.total * 100;
+          console.log( Math.round( percentComplete, 2 ) + '% downloaded' );
+
+        }
+
+      };
+
+      var onError = function ( xhr ) { };
+
+      //THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
+
+      new THREE.MTLLoader()
+        .setPath( 'models/' )
+        .load( 'gun.mtl', function ( materials ) {
+
+          materials.preload();
+
+          new THREE.OBJLoader()
+            .setMaterials( materials )
+            .setPath( 'models/' )
+            .load( 'gun.obj', function ( object ) {
+
+              scene.add( object );
+
+            }, onProgress, onError );
+
+        } );
 
       //var enemy = new THREE.EnemyPrefab(scene);
 
