@@ -313,24 +313,25 @@
 
       var onError = function ( xhr ) { };
 
-      THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
 
-      new THREE.MTLLoader()
-        .setPath( 'models/' )
-        .load( 'gun.mtl', function ( materials ) {
+      var mtlLoader = new THREE.MTLLoader();
+      mtlLoader.setBaseUrl( 'models/' );
+      mtlLoader.setPath( 'models/' );
+      var url = "gun.mtl";
+      mtlLoader.load( url, function( materials ) {
 
           materials.preload();
 
-          new THREE.OBJLoader()
-            .setMaterials( materials )
-            .setPath( 'models/' )
-            .load( 'gun.obj', function ( object ) {
+          var objLoader = new THREE.OBJLoader();
+          objLoader.setMaterials( materials );
+          objLoader.setPath( 'models/' );
+          objLoader.load( 'gun.obj', function ( object ) {
 
               scene.add( object );
 
-            }, onProgress, onError );
+          }, onProgress, onError );
 
-        } );
+      });
 
       //var enemy = new THREE.EnemyPrefab(scene);
 
