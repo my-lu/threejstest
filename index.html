@@ -124,6 +124,7 @@
       start();
       update();
 
+      var character;
       function start() {
         scene = new THREE.Scene();
         scene.background = new THREE.Color(0xffffff);
@@ -134,7 +135,7 @@
         scene.add(light);
 
         // --- Character --- //
-        var character = new THREE.Group();
+        character = new THREE.Group();
         scene.add(character);
         // ----------------- //
 
