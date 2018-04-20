@@ -46,6 +46,8 @@
     <script src="js/three.js"></script>
     <script src="js/OrbitControls.js"></script>
     <script src="js/PointerLockControls.js"></script>
+    <script src="js/OBJLoader.js"></script>
+    <script src="js/ColladaLoader.js"></script>
     <script src="js/enemy.js"></script>
 
     <script>
@@ -297,14 +299,14 @@
       controls = new THREE.OrbitControls(camera, renderer.domElement);
       //controls = new THREE.FirstPersonControls(camera, renderer.domElement);
 
-      var loader = new THREE.OBJLoader();
+      var loader = new THREE.ColladaLoader();
 
       loader.load(
         // resource URL
-        'models/gun.obj',
+        'models/gun.dae',
         // called when resource is loaded
         function ( object ) {
-          
+
           scene.add( object );
 
         },
