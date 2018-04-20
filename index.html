@@ -301,15 +301,15 @@
       //controls = new THREE.FirstPersonControls(camera, renderer.domElement);
 
       var mtlLoader = new THREE.MTLLoader();
-      mtlLoader.setTexturePath('/models/');
-      mtlLoader.setPath('/models/');
+      mtlLoader.setTexturePath('models/');
+      mtlLoader.setPath('models/');
       mtlLoader.load('gun.mtl', function (materials) {
        
           materials.preload();
        
           var objLoader = new THREE.OBJLoader();
           objLoader.setMaterials(materials);
-          objLoader.setPath('/models/');
+          objLoader.setPath('models/');
           objLoader.load('gun.obj', function (object) {
        
               scene.add(object);
