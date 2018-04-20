@@ -43,6 +43,11 @@
   </head>
 
   <body>
+    <div id="overlay">
+      <div id="pause">
+        <span style="font-size:30px">PAUSE</span>
+      </div>
+    </div>
     <script src="js/three.js"></script>
     <script src="js/OrbitControls.js"></script>
     <script src="js/PointerLockControls.js"></script>
@@ -54,11 +59,6 @@
     <script>
       
 
-    <div id="overlay">
-      <div id="pause">
-        <span style="font-size:30px">PAUSE</span>
-      </div>
-    </div>
       var scene, camera, controls, renderer;
       var objects = [];
       var enemy;
