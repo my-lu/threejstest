@@ -55,6 +55,7 @@
     <script src="js/MTLLoader.js"></script>
     <script src="js/ColladaLoader.js"></script>
     <script src="js/enemy.js"></script>
+    <script src="js/player.js"></script>
 
     <script>
       
@@ -63,7 +64,7 @@
       var objects = [];
       var enemy;
 
-      var raycaster;
+      var player;
 
       var overlay = document.getElementById('overlay');
       var pause = document.getElementById('pause');
@@ -134,12 +135,26 @@
         scene.add(light);
 
         // --- Character --- //
-        var character = new THREE.Group();
-        scene.add(character);
+        //var character = new THREE.Group();
+        //scene.add(character);
         // ----------------- //
 
+        // --- Gun Object --- //
+        var gunModel;
+        var loadingManager = new THREE.LoadingManager(function() {
+          //gunModel.position.set(0, 10, 5);
+          //character.add(gunModel);
+          scene.add(gunModel);
+        });
+
+        var loader = new THREE.ColladaLoader(loadingManager);
+        loader.load('./models/gun.dae', function (collada) {
+          gunModel = collada.scene;
+        });
+        // ------------------ //
+
         // --- Controls --- //
-        controls = new THREE.PointerLockControls(camera);
+        controls = new THREE.PointerLockControls(camera, gunModel);
         scene.add(controls.getObject());
 
         var onKeyDown = function(event) {
@@ -165,7 +180,13 @@
         document.addEventListener('keyup', onKeyUp, false);
         // ---------------- //
 
-        raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, 10);
+        // --- Bounding Box Rays --- //
+        raycasterDown = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0), 0, 1);
+        raycasterFront = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, 0, 1), 0, 1);
+        raycasterBack = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, 0, -1), 0, 1);
+        raycasterLeft = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(1, 0, 0), 0, 1);
+        raycasterRight = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(-1, 0, 0), 0, 1);
+        // ------------------------- //
 
         // --- Floor Object --- //
         var floorGeometry = new THREE.PlaneBufferGeometry(100, 100, 10, 10);
@@ -221,17 +242,9 @@
         enemy = new THREE.EnemyPrefab(scene, 5);
         // -------------------- //
 
-        // --- Gun Object --- //
-        var loadingManager = new THREE.LoadingManager(function() {
-          gunModel.position.set(0, 10, 5);
-          character.add(gunModel);
-        });
-
-        var loader = new THREE.ColladaLoader(loadingManager);
-        loader.load('./models/gun.dae', function (collada) {
-          gunModel = collada.scene;
-        });
-        // ------------------ //
+        // --- Player Object --- //
+        player = new THREE.PlayerPrefab(controls.getObject(), gunModel);
+        // --------------------- //
 
         renderer = new THREE.WebGLRenderer({antialias: true});
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -255,10 +268,12 @@
           var controlObject = controls.getObject();
           //var controlObject = enemy.enemyPrefab;
 
+          /*
           raycaster.ray.origin.copy(controlObject.position);
 
           var intersections = raycaster.intersectObjects(objects);
           var onObject = intersections.length > 0;
+          */
 
           var time = performance.now();
           var deltaTime = (time - lastTime) / 1000;
@@ -274,9 +289,30 @@
           if(move_forward || move_backward) velocity.z -= direction.z * 400.0 * deltaTime;
           if(move_left || move_right) velocity.x -= direction.x * 400.0 * deltaTime;
 
-          if(onObject) {
+          if(checkDownwardCollsion(controlObject) === true) {
+            console.log("collided underneath");
             velocity.y = Math.max(0, velocity.y);
             move_jump = true;
+          }
+
+          if(checkForwardCollsion(controlObject) === true) {
+            console.log("collided in front");
+            velocity.z = Math.max(0, velocity.z);
+          }
+
+          if(checkBackwardCollsion(controlObject) === true) {
+            console.log("collided in back");
+            velocity.z = Math.min(0, velocity.z);
+          }
+
+          if(checkLeftwardCollsion(controlObject) === true) {
+            console.log("collided in left");
+            velocity.x = Math.max(0, velocity.x);
+          }
+
+          if(checkRightwardCollsion(controlObject) === true) {
+            console.log("collided in right");
+            velocity.x = Math.min(0, velocity.x);
           }
 
           controlObject.translateX(velocity.x * deltaTime);
@@ -293,6 +329,126 @@
         }
 
         renderer.render(scene, camera);
+      }
+
+      function checkDownwardCollsion(controlObject) {
+        raycasterDown.ray.origin.copy(controlObject.position);
+        raycasterDown.ray.origin.x += 5;
+        raycasterDown.ray.origin.y -= 10;
+        raycasterDown.ray.origin.z += 5;
+
+        var intersections = raycasterDown.intersectObjects(objects);
+        if(intersections.length > 0) return true;
+
+        raycasterDown.ray.origin.x -= 10;
+        var intersections = raycasterDown.intersectObjects(objects);
+        if(intersections.length > 0) return true;
+
+        raycasterDown.ray.origin.z -= 10;
+        var intersections = raycasterDown.intersectObjects(objects);
+        if(intersections.length > 0) return true;
+
+        raycasterDown.ray.origin.x += 10;
+        var intersections = raycasterDown.intersectObjects(objects);
+        if(intersections.length > 0) return true;
+
+        return false;
+      }
+
+      function checkForwardCollsion(controlObject) {
+        raycasterFront.ray.origin.copy(controlObject.position);
+        raycasterFront.ray.origin.x += 5;
+        raycasterFront.ray.origin.y -= 10;
+        raycasterFront.ray.origin.z += 5;
+
+        var intersections = raycasterFront.intersectObjects(objects);
+        if(intersections.length > 0) return true;
+
+        raycasterFront.ray.origin.x -= 10;
+        var intersections = raycasterFront.intersectObjects(objects);
+        if(intersections.length > 0) return true;
+
+        raycasterFront.ray.origin.y += 15;
+        var intersections = raycasterFront.intersectObjects(objects);
+        if(intersections.length > 0) return true;
+
+        raycasterFront.ray.origin.x += 10;
+        var intersections = raycasterFront.intersectObjects(objects);
+        if(intersections.length > 0) return true;
+
+        return false;
+      }
+
+      function checkBackwardCollsion(controlObject) {
+        raycasterBack.ray.origin.copy(controlObject.position);
+        raycasterBack.ray.origin.x += 5;
+        raycasterBack.ray.origin.y -= 10;
+        raycasterBack.ray.origin.z -= 5;
+
+        var intersections = raycasterBack.intersectObjects(objects);
+        if(intersections.length > 0) return true;
+
+        raycasterBack.ray.origin.x -= 10;
+        var intersections = raycasterBack.intersectObjects(objects);
+        if(intersections.length > 0) return true;
+
+        raycasterBack.ray.origin.y += 15;
+        var intersections = raycasterBack.intersectObjects(objects);
+        if(intersections.length > 0) return true;
+
+        raycasterBack.ray.origin.x += 10;
+        var intersections = raycasterBack.intersectObjects(objects);
+        if(intersections.length > 0) return true;
+
+        return false;
+      }
+
+      function checkLeftwardCollsion(controlObject) {
+        raycasterLeft.ray.origin.copy(controlObject.position);
+        raycasterLeft.ray.origin.x += 5;
+        raycasterLeft.ray.origin.y -= 10;
+        raycasterLeft.ray.origin.z += 5;
+
+        var intersections = raycasterLeft.intersectObjects(objects);
+        if(intersections.length > 0) return true;
+
+        raycasterLeft.ray.origin.z -= 10;
+        var intersections = raycasterLeft.intersectObjects(objects);
+        if(intersections.length > 0) return true;
+
+        raycasterLeft.ray.origin.y += 15;
+        var intersections = raycasterLeft.intersectObjects(objects);
+        if(intersections.length > 0) return true;
+
+        raycasterLeft.ray.origin.z += 10;
+        var intersections = raycasterLeft.intersectObjects(objects);
+        if(intersections.length > 0) return true;
+
+        return false;
+      }
+
+      function checkRightwardCollsion(controlObject) {
+        raycasterRight.ray.origin.copy(controlObject.position);
+        raycasterRight.ray.origin.x -= 5;
+        raycasterRight.ray.origin.y -= 10;
+        raycasterRight.ray.origin.z += 5;
+
+        var intersections = raycasterRight.intersectObjects(objects);
+        if(intersections.length > 0) return true;
+
+        raycasterRight.ray.origin.z -= 10;
+        var intersections = raycasterRight.intersectObjects(objects);
+        if(intersections.length > 0) return true;
+
+        raycasterRight.ray.origin.y += 15;
+        var intersections = raycasterRight.intersectObjects(objects);
+        if(intersections.length > 0) return true;
+
+        raycasterRight.ray.origin.z += 10;
+        var intersections = raycasterRight.intersectObjects(objects);
+        if(intersections.length > 0) return true;
+
+        return false;
       }
       
 
