@@ -65,6 +65,7 @@
       var enemy;
 
       var player;
+      var character;
 
       var overlay = document.getElementById('overlay');
       var pause = document.getElementById('pause');
@@ -135,8 +136,8 @@
         scene.add(light);
 
         // --- Character --- //
-        //var character = new THREE.Group();
-        //scene.add(character);
+        var character = new THREE.Group();
+        scene.add(character);
         // ----------------- //
 
         // --- Controls --- //
@@ -231,9 +232,9 @@
         // --- Gun Object --- //
         var gunModel;
         var loadingManager = new THREE.LoadingManager(function() {
-          //gunModel.position.set(0, 10, 5);
-          //character.add(gunModel);
-          scene.add(gunModel);
+          gunModel.position.set(5, 5, -5);
+          character.add(gunModel);
+          //scene.add(gunModel);
         });
 
         var loader = new THREE.ColladaLoader(loadingManager);
@@ -328,7 +329,7 @@
           lastTime = time;
         }
 
-        gunModel.rotation.set(controlObject.rotation);
+        character.rotation.set(controlObject.rotation);
 
         renderer.render(scene, camera);
       }
