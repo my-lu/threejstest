@@ -139,22 +139,8 @@
         //scene.add(character);
         // ----------------- //
 
-        // --- Gun Object --- //
-        var gunModel;
-        var loadingManager = new THREE.LoadingManager(function() {
-          //gunModel.position.set(0, 10, 5);
-          //character.add(gunModel);
-          scene.add(gunModel);
-        });
-
-        var loader = new THREE.ColladaLoader(loadingManager);
-        loader.load('./models/gun.dae', function (collada) {
-          gunModel = collada.scene;
-        });
-        // ------------------ //
-
         // --- Controls --- //
-        controls = new THREE.PointerLockControls(camera, gunModel);
+        controls = new THREE.PointerLockControls(camera);
         scene.add(controls.getObject());
 
         var onKeyDown = function(event) {
@@ -242,6 +228,20 @@
         enemy = new THREE.EnemyPrefab(scene, 5);
         // -------------------- //
 
+        // --- Gun Object --- //
+        var gunModel;
+        var loadingManager = new THREE.LoadingManager(function() {
+          //gunModel.position.set(0, 10, 5);
+          //character.add(gunModel);
+          scene.add(gunModel);
+        });
+
+        var loader = new THREE.ColladaLoader(loadingManager);
+        loader.load('./models/gun.dae', function (collada) {
+          gunModel = collada.scene;
+        });
+        // ------------------ //
+
         // --- Player Object --- //
         player = new THREE.PlayerPrefab(controls.getObject(), gunModel);
         // --------------------- //
@@ -327,6 +327,8 @@
 
           lastTime = time;
         }
+
+        gunModel.rotation.set(controlObject.rotation);
 
         renderer.render(scene, camera);
       }

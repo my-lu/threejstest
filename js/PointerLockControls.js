@@ -2,7 +2,7 @@
  * @author mrdoob / http://mrdoob.com/
  */
 
-THREE.PointerLockControls = function ( camera, weaponModel ) {
+THREE.PointerLockControls = function ( camera ) {
 
 	var scope = this;
 
@@ -10,7 +10,6 @@ THREE.PointerLockControls = function ( camera, weaponModel ) {
 
 	var pitchObject = new THREE.Object3D();
 	pitchObject.add( camera );
-	pitchObject.add(weaponModel);
 
 	var yawObject = new THREE.Object3D();
 	yawObject.position.y = 10;
