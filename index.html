@@ -477,6 +477,7 @@
       //controls = new THREE.FirstPersonControls(camera, renderer.domElement);
 
       var loadingManager = new THREE.LoadingManager(function() {
+        model.position.x += 100;
         scene.add(model);
       });
 
@@ -484,10 +485,19 @@
       loader.load('./models/gun.dae', function (collada) {
         model = collada.scene;
       });
+
+      loadingManager = new THREE.LoadingManager(function() {
+        scene.add(model);
+      });
       loader.load('./models/figure.dae', function (collada) {
         model = collada.scene;
       });
-      loader.load('./models/enemy.dae', function (collada) {
+
+      loadingManager = new THREE.LoadingManager(function() {
+        model.position.x -= 100;
+        scene.add(model);
+      });
+      loader.load('./models/enemy1.dae', function (collada) {
         model = collada.scene;
       });
       
