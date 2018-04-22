@@ -490,28 +490,30 @@
       loader.load('./models/gun.dae', function (collada) {
         model = collada.scene;
       });
-/*
-      loadingManager = new THREE.LoadingManager(function() {
-        scene.add(model);
-      });
-      loader.load('./models/figure.dae', function (collada) {
-        model = collada.scene;
-      });*/
 
       var loadingManager2 = new THREE.LoadingManager(function() {
+        scene.add(model);
+      });
+
+      var loader2 = new THREE.ColladaLoader(loadingManager2);
+      loader2.load('./models/figure.dae', function (collada) {
+        model = collada.scene;
+      });
+
+      var loadingManager3 = new THREE.LoadingManager(function() {
         model.position.x -= 20;
         scene.add(model);
       });
 
-      var loader = new THREE.ColladaLoader(loadingManager2);
-      loader.load('./models/enemy1.dae', function (collada) {
+      var loader3 = new THREE.ColladaLoader(loadingManager3);
+      loader3.load('./models/enemy1.dae', function (collada) {
         model = collada.scene;
       });
       
 
       //var enemy = new THREE.EnemyPrefab(scene);
 
-      camera.position.z = 3;
+      camera.position.z = 10;
 
       var update = function() {
         
