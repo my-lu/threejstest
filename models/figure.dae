@@ -5,8 +5,8 @@
       <author>Blender User</author>
       <authoring_tool>Blender 2.79.0 commit date:2017-09-11, commit time:10:43, hash:5bd8ac9</authoring_tool>
     </contributor>
-    <created>2018-04-22T15:46:01</created>
-    <modified>2018-04-22T15:46:01</modified>
+    <created>2018-04-22T15:55:16</created>
+    <modified>2018-04-22T15:55:16</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -74,7 +74,7 @@
         <instance_camera url="#Camera-camera"/>
       </node>
       <node id="Cube_004" name="Cube_004" type="NODE">
-        <matrix sid="transform">1.00235 0 0 0.4745595 0 1.00235 0 2.27846e-7 0 0 2.805288 -4.179185 0 0 0 1</matrix>
+        <matrix sid="transform">0.3731475 0 0 0.4745595 0 0.3731475 0 2.27846e-7 0 0 1.044331 -4.179185 0 0 0 1</matrix>
         <instance_geometry url="#Cube_007-mesh" name="Cube_004"/>
       </node>
     </visual_scene>
