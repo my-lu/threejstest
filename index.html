@@ -43,11 +43,6 @@
   </head>
 
   <body>
-    <div id="overlay">
-      <div id="pause">
-        <span style="font-size:30px">PAUSE</span>
-      </div>
-    </div>
     <script src="js/three.js"></script>
     <script src="js/OrbitControls.js"></script>
     <script src="js/PointerLockControls.js"></script>
@@ -59,7 +54,12 @@
 
     <script>
       
-
+      /*
+      <div id="overlay">
+        <div id="pause">
+          <span style="font-size:30px">PAUSE</span>
+        </div>
+      </div>
       var scene, camera, controls, renderer;
       var objects = [];
       var enemy;
@@ -269,12 +269,12 @@
           var controlObject = controls.getObject();
           //var controlObject = enemy.enemyPrefab;
 
-          /*
+          
           raycaster.ray.origin.copy(controlObject.position);
 
           var intersections = raycaster.intersectObjects(objects);
           var onObject = intersections.length > 0;
-          */
+          
 
           var time = performance.now();
           var deltaTime = (time - lastTime) / 1000;
@@ -453,11 +453,11 @@
 
         return false;
       }
+      */
+
+
+
       
-
-
-
-      /*
       var scene = new THREE.Scene();
       var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
@@ -477,12 +477,18 @@
       //controls = new THREE.FirstPersonControls(camera, renderer.domElement);
 
       var loadingManager = new THREE.LoadingManager(function() {
-        scene.add(gunModel);
+        scene.add(model);
       });
 
       var loader = new THREE.ColladaLoader(loadingManager);
       loader.load('./models/gun.dae', function (collada) {
-        gunModel = collada.scene;
+        model = collada.scene;
+      });
+      loader.load('./models/figure.dae', function (collada) {
+        model = collada.scene;
+      });
+      loader.load('./models/enemy.dae', function (collada) {
+        model = collada.scene;
       });
       
 
@@ -510,7 +516,7 @@
       };
 
       GameLoop();
-      */
+      
     </script>
   </body>
 </html>
