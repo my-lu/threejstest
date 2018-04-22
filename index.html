@@ -462,6 +462,10 @@
       scene.background = new THREE.Color(0xffffff);
       var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
+      var light = new THREE.HemisphereLight(0xeeeeff, 0x777788, 0.75);
+      light.position.set(0.5, 1, 0.75);
+      scene.add(light);
+
       var renderer = new THREE.WebGLRenderer();
       renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(renderer.domElement);
@@ -493,11 +497,6 @@
       loader.load('./models/figure.dae', function (collada) {
         model = collada.scene;
       });*/
-
-      loadingManager = new THREE.LoadingManager(function() {
-        model.position.x -= 20;
-        scene.add(model);
-      });
       loader.load('./models/enemy1.dae', function (collada) {
         model = collada.scene;
       });
