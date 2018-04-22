@@ -485,13 +485,13 @@
       loader.load('./models/gun.dae', function (collada) {
         model = collada.scene;
       });
-
+/*
       loadingManager = new THREE.LoadingManager(function() {
         scene.add(model);
       });
       loader.load('./models/figure.dae', function (collada) {
         model = collada.scene;
-      });
+      });*/
 
       loadingManager = new THREE.LoadingManager(function() {
         model.position.x -= 100;
