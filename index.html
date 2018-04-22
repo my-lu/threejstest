@@ -497,6 +497,13 @@
       loader.load('./models/figure.dae', function (collada) {
         model = collada.scene;
       });*/
+
+      var loadingManager2 = new THREE.LoadingManager(function() {
+        model.position.x -= 20;
+        scene.add(model);
+      });
+
+      var loader = new THREE.ColladaLoader(loadingManager2);
       loader.load('./models/enemy1.dae', function (collada) {
         model = collada.scene;
       });
