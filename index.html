@@ -509,6 +509,16 @@
       loader3.load('./models/enemy1.dae', function (collada) {
         model = collada.scene;
       });
+
+      var loadingManager4 = new THREE.LoadingManager(function() {
+        model.position.x += 40;
+        scene.add(model);
+      });
+
+      var loader4 = new THREE.ColladaLoader(loadingManager4);
+      loader4.load('./models/gun2.dae', function (collada) {
+        model = collada.scene;
+      });
       
 
       //var enemy = new THREE.EnemyPrefab(scene);
