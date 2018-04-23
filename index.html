@@ -483,7 +483,7 @@
 
       var loadingManager = new THREE.LoadingManager(function() {
         model.position.x += 10;
-        model.rotation.x += Math.PI / 2;
+        model.rotation.z += Math.PI / 2;
         scene.add(model);
       });
 
@@ -513,8 +513,8 @@
 
       var loadingManager4 = new THREE.LoadingManager(function() {
         model.position.x += 10;
-        model.position.x += 10;
-        model.rotation.y += Math.PI / 2;
+        model.position.y += 10;
+        model.rotation.z += Math.PI / 2;
         scene.add(model);
       });
 
@@ -525,7 +525,7 @@
 
       var loadingManager5 = new THREE.LoadingManager(function() {
         model.position.y += 10;
-        model.rotation.x -= Math.PI / 2;
+        model.rotation.z -= Math.PI / 2;
         scene.add(model);
       });
 
