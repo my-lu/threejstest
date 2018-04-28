@@ -54,7 +54,153 @@
     <script src="js/player.js"></script>
 
     <script>
+      var scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xffffff);
+      var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+      var light = new THREE.HemisphereLight(0xeeeeff, 0x777788, 0.75);
+      light.position.set(0.5, 1, 0.75);
+      scene.add(light);
+
+      var renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      window.addEventListener('resize', function() {
+        var width = window.innerWidth;
+        var height = window.innerHeight;
+        renderer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+      });
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      //controls = new THREE.FirstPersonControls(camera, renderer.domElement);
+
+      var objects = [];
+
+      var loadingManager = new THREE.LoadingManager(function() {
+        model.position.x += 20;
+        scene.add(model);
+        objects.push(model);
+      });
+
+      var loader = new THREE.ColladaLoader(loadingManager);
+      loader.load('./models/gun.dae', function (collada) {
+        model = collada.scene;
+      });
+
+      var loadingManager2 = new THREE.LoadingManager(function() {
+        scene.add(model);
+        objects.push(model);
+      });
+
+      var loader2 = new THREE.ColladaLoader(loadingManager2);
+      loader2.load('./models/figure.dae', function (collada) {
+        model = collada.scene;
+      });
+
+      var loadingManager3 = new THREE.LoadingManager(function() {
+        model.position.x -= 20;
+        scene.add(model);
+        objects.push(model);
+      });
+
+      var loader3 = new THREE.ColladaLoader(loadingManager3);
+      loader3.load('./models/enemy1.dae', function (collada) {
+        model = collada.scene;
+      });
+
+      var loadingManager4 = new THREE.LoadingManager(function() {
+        model.position.x += 40;
+        scene.add(model);
+        objects.push(model);
+      });
+
+      var loader4 = new THREE.ColladaLoader(loadingManager4);
+      loader4.load('./models/gun2.dae', function (collada) {
+        model = collada.scene;
+      });
+
+      var loadingManager5 = new THREE.LoadingManager(function() {
+        model.position.x -= 40;
+        scene.add(model);
+        objects.push(model);
+      });
+
+      var loader5 = new THREE.ColladaLoader(loadingManager5);
+      loader5.load('./models/chest.dae', function (collada) {
+        model = collada.scene;
+      });
+
+      var loadingManager6 = new THREE.LoadingManager(function() {
+        model.position.x -= 60;
+        scene.add(model);
+        objects.push(model);
+      });
+
+      var loader6 = new THREE.ColladaLoader(loadingManager6);
+      loader6.load('./models/potion.dae', function (collada) {
+        model = collada.scene;
+      });
       
+
+      //var enemy = new THREE.EnemyPrefab(scene);
+
+      camera.position.z = 10;
+
+      var raycaster = new THREE.ColladaRaycaster();
+      var directionVector = new THREE.Vector3();
+      var material = new THREE.LineBasicMaterial( { linewidth:10, color: 0x0000ff} );
+      var geometry;
+
+      window.onkeydown = function(event) {
+        if(event.keyCode === 32) {
+          directionVector.set(0, 0, 1);
+          
+          directionVector.unproject(camera);
+          directionVector.sub(camera.position);
+          directionVector.normalize();
+          raycaster.set(camera.position, directionVector);
+          var intersects = raycaster.raycast(objects);
+          console.log('ray shot');
+          if(intersects.length) {
+            geometry = new THREE.Geometry();
+            geometry.vertices.push(new THREE.Vector3( camera.position.x, camera.position.y, camera.position.z) );
+            geometry.vertices.push(new THREE.Vector3( intersects[0].point.x, intersects[0].point.y, intersects[0].point.z ) );
+            line = new THREE.Line(geometry, material);
+            scene.add(line);
+
+            console.log(intersects[0].point);
+          }
+        }
+      }
+
+      var update = function() {
+        //cube.rotation.x += 0.01;
+        //cube.rotation.y += 0.005;
+        
+        //enemy.setGeometry();
+      };
+
+      var render = function() {
+        renderer.render(scene, camera);
+      };
+
+      var GameLoop = function() {
+        requestAnimationFrame(GameLoop);
+
+        update();
+        render();
+      };
+
+      GameLoop();
+      
+
+
+
+
+
       /*
       <div id="overlay">
         <div id="pause">
@@ -455,153 +601,6 @@
         return false;
       }
       */
-
-
-
-      
-      var scene = new THREE.Scene();
-      scene.background = new THREE.Color(0xffffff);
-      var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-
-      var light = new THREE.HemisphereLight(0xeeeeff, 0x777788, 0.75);
-      light.position.set(0.5, 1, 0.75);
-      scene.add(light);
-
-      var renderer = new THREE.WebGLRenderer();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      document.body.appendChild(renderer.domElement);
-
-      window.addEventListener('resize', function() {
-        var width = window.innerWidth;
-        var height = window.innerHeight;
-        renderer.setSize(width, height);
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-      });
-
-      controls = new THREE.OrbitControls(camera, renderer.domElement);
-      //controls = new THREE.FirstPersonControls(camera, renderer.domElement);
-
-      var objects = [];
-
-      var loadingManager = new THREE.LoadingManager(function() {
-        model.position.x += 20;
-        scene.add(model);
-        objects.push(model);
-      });
-
-      var loader = new THREE.ColladaLoader(loadingManager);
-      loader.load('./models/gun.dae', function (collada) {
-        model = collada.scene;
-      });
-
-      var loadingManager2 = new THREE.LoadingManager(function() {
-        scene.add(model);
-        objects.push(model);
-      });
-
-      var loader2 = new THREE.ColladaLoader(loadingManager2);
-      loader2.load('./models/figure.dae', function (collada) {
-        model = collada.scene;
-      });
-
-      var loadingManager3 = new THREE.LoadingManager(function() {
-        model.position.x -= 20;
-        scene.add(model);
-        objects.push(model);
-      });
-
-      var loader3 = new THREE.ColladaLoader(loadingManager3);
-      loader3.load('./models/enemy1.dae', function (collada) {
-        model = collada.scene;
-      });
-
-      var loadingManager4 = new THREE.LoadingManager(function() {
-        model.position.x += 40;
-        scene.add(model);
-        objects.push(model);
-      });
-
-      var loader4 = new THREE.ColladaLoader(loadingManager4);
-      loader4.load('./models/gun2.dae', function (collada) {
-        model = collada.scene;
-      });
-
-      var loadingManager5 = new THREE.LoadingManager(function() {
-        model.position.x -= 40;
-        scene.add(model);
-        objects.push(model);
-      });
-
-      var loader5 = new THREE.ColladaLoader(loadingManager5);
-      loader5.load('./models/chest.dae', function (collada) {
-        model = collada.scene;
-      });
-
-      var loadingManager6 = new THREE.LoadingManager(function() {
-        model.position.x -= 60;
-        scene.add(model);
-        objects.push(model);
-      });
-
-      var loader6 = new THREE.ColladaLoader(loadingManager6);
-      loader6.load('./models/potion.dae', function (collada) {
-        model = collada.scene;
-      });
-      
-
-      //var enemy = new THREE.EnemyPrefab(scene);
-
-      camera.position.z = 10;
-
-      var raycaster = new THREE.ColladaRaycaster();
-      var directionVector = new THREE.Vector3();
-      var material = new THREE.LineBasicMaterial( { linewidth:10, color: 0x0000ff} );
-      var geometry;
-
-      window.onkeydown = function(event) {
-        if(event.keyCode === 32) {
-          directionVector.set(0, 0, 1);
-          
-          directionVector.unproject(camera);
-          directionVector.sub(camera.position);
-          directionVector.normalize();
-          raycaster.set(camera.position, directionVector);
-          var intersects = raycaster.raycast(objects);
-          console.log('ray shot');
-          if(intersects.length) {
-            geometry = new THREE.Geometry();
-            geometry.vertices.push(new THREE.Vector3( camera.position.x, camera.position.y, camera.position.z) );
-            geometry.vertices.push(new THREE.Vector3( intersects[0].point.x, intersects[0].point.y, intersects[0].point.z ) );
-            line = new THREE.Line(geometry, material);
-            scene.add(line);
-
-            console.log(intersects[0].point);
-          }
-        }
-      }
-
-      var update = function() {
-        
-        //cube.rotation.x += 0.01;
-        //cube.rotation.y += 0.005;
-        
-        //enemy.setGeometry();
-      };
-
-      var render = function() {
-        renderer.render(scene, camera);
-      };
-
-      var GameLoop = function() {
-        requestAnimationFrame(GameLoop);
-
-        update();
-        render();
-      };
-
-      GameLoop();
-      
     </script>
   </body>
 </html>
