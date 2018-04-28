@@ -489,6 +489,8 @@
       var loader = new THREE.ColladaLoader(loadingManager);
       loader.load('./models/gun.dae', function (collada) {
         model = collada.scene;
+        console.log(model.geometry.isBufferGeometry);
+        console.log(model.geometry.isGeometry);
       });
 
       var loadingManager2 = new THREE.LoadingManager(function() {
