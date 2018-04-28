@@ -80,7 +80,8 @@
       var objects = [];
 
       var loadingManager = new THREE.LoadingManager(function() {
-        model.position.x += 20;
+        model.position.x += 10;
+        model.rotation.z += Math.PI / 2;
         scene.add(model);
         objects.push(model);
       });
@@ -101,7 +102,7 @@
       });
 
       var loadingManager3 = new THREE.LoadingManager(function() {
-        model.position.x -= 20;
+        model.position.x -= 10;
         scene.add(model);
         objects.push(model);
       });
@@ -112,7 +113,9 @@
       });
 
       var loadingManager4 = new THREE.LoadingManager(function() {
-        model.position.x += 40;
+        model.position.x += 10;
+        model.position.y += 10;
+        model.rotation.z += Math.PI / 2;
         scene.add(model);
         objects.push(model);
       });
@@ -123,7 +126,8 @@
       });
 
       var loadingManager5 = new THREE.LoadingManager(function() {
-        model.position.x -= 40;
+        model.position.y += 10;
+        model.rotation.z += Math.PI / 2;
         scene.add(model);
         objects.push(model);
       });
@@ -134,7 +138,8 @@
       });
 
       var loadingManager6 = new THREE.LoadingManager(function() {
-        model.position.x -= 60;
+        model.position.x -= 10;
+        model.position.y += 10;
         scene.add(model);
         objects.push(model);
       });
